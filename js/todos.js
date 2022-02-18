@@ -1,14 +1,14 @@
-const todoForm = document.querySelector('#todos-form');
-const todoInput = document.querySelector('#todos-input');
-const todoItemsList = document.getElementById('todo-items').getElementsByTagName('tbody')[0];
+const form_todo = document.querySelector('#todos-form');
+const input_todo = document.querySelector('#todos-input');
+const tbody_todo = document.getElementById('todo-items').getElementsByTagName('tbody')[0];
 let todos = [];
 
-todoForm.addEventListener('submit', function(event) {
+form_todo.addEventListener('submit', function(event) {
   event.preventDefault();
-  addTodo(todoInput.value);
+  tambah_aktivitas(input_todo.value);
 });
 
-function addTodo(item) {
+function tambah_aktivitas(item) {
   if (item !== '') {
     const todo = {
       id: Date.now(),
@@ -16,20 +16,20 @@ function addTodo(item) {
       completed: false
     };
     todos.push(todo);
-    addToLocalStorage(todos);
-    todoInput.value = '';
+    simpan_ke_localstorage(todos);
+    input_todo.value = '';
   }
 }
 
-function renderTodos(todos) {
-  todoItemsList.innerHTML = `<tr>
+function show_aktivitas(todos) {
+  tbody_todo.innerHTML = `<tr>
     <td colspan="4" style="text-align:center;">Data Not Found</td>
   </tr>`;
   if(todos.length>0){
-    todoItemsList.innerHTML = ``;
+    tbody_todo.innerHTML = ``;
     todos.forEach(function(item) {
       const checked = item.completed ? 'checked': null;
-      const tr = todoItemsList.insertRow();;
+      const tr = tbody_todo.insertRow();;
       tr.setAttribute('class', 'item');
       tr.setAttribute('data-key', item.id);
       if (item.completed === true) {
@@ -41,21 +41,21 @@ function renderTodos(todos) {
         <td>${item.name}</td>
         <td><button class="delete-button">Hapus Aktivitas</button></td>
       `;
-      todoItemsList.appendChild(tr);
+      tbody_todo.appendChild(tr);
     });
   }
 }
 
-function addToLocalStorage(todos) {
+function simpan_ke_localstorage(todos) {
   localStorage.setItem('todos', JSON.stringify(todos));
-  renderTodos(todos);
+  show_aktivitas(todos);
 }
 
-function getFromLocalStorage() {
+function get_From_LocalStorage() {
   const reference = localStorage.getItem('todos');
   if (reference) {
     todos = JSON.parse(reference);
-    renderTodos(todos);
+    show_aktivitas(todos);
   }
 }
 
@@ -67,25 +67,25 @@ function toggle(id) {
     }
   });
 
-  addToLocalStorage(todos);
+  simpan_ke_localstorage(todos);
 }
 
-function deleteTodo(id) {
+function hapus_aktivitas(id) {
   todos = todos.filter(function(item) {
     return item.id != id;
   });
 
-  addToLocalStorage(todos);
+  simpan_ke_localstorage(todos);
 }
 
-getFromLocalStorage();
+get_From_LocalStorage();
 
-todoItemsList.addEventListener('click', function(event) {
+tbody_todo.addEventListener('click', function(event) {
   if (event.target.type === 'checkbox') {
     toggle(event.target.parentElement.parentElement.dataset.key);
   }
 
   if (event.target.classList.contains('delete-button')) {
-    deleteTodo(event.target.parentElement.parentElement.dataset.key);
+    hapus_aktivitas(event.target.parentElement.parentElement.dataset.key);
   }
 });
